@@ -9,6 +9,10 @@ if env['platform'] == "osx":
     env.Append(CPPPATH=["/opt/homebrew/include"])
     env.Append(LIBPATH=["/opt/homebrew/lib"])
     env.Append(LIBS=["libmosquittopp"])
+elif env['platform'] in ('x11', 'linux'):
+    env.Append(CPPPATH=["/usr/include"])
+    env.Append(LIBPATH=["/usr/lib"])
+    env.Append(LIBS=["libmosquittopp"])
 
 # Create lib
 sources = Glob("src/*.cpp")
