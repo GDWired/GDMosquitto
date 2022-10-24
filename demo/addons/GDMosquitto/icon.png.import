@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon.png-b1e3d7404777d17a792074e248e0031f.stex"
+path="res://.import/icon.png-ac223da5b25973c7e36dda5abf78a745.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/mosquitto/icon.png"
-dest_files=[ "res://.import/icon.png-b1e3d7404777d17a792074e248e0031f.stex" ]
+source_file="res://addons/GDMosquitto/icon.png"
+dest_files=[ "res://.import/icon.png-ac223da5b25973c7e36dda5abf78a745.stex" ]
 
 [params]
 

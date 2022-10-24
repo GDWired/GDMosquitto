@@ -37,3 +37,4 @@
 # Apple
 .DS_Store
 *.os
+*.code-workspace

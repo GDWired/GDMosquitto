@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://addons/mosquitto/GDMosquitto.gdns" type="Script" id=1]
+[ext_resource path="res://addons/GDMosquitto/GDMosquitto.gdns" type="Script" id=1]
 [ext_resource path="res://scripts/MQTTPub.gd" type="Script" id=2]
 
 [node name="MQTTPub" type="HBoxContainer"]

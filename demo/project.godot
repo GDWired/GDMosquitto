@@ -15,7 +15,7 @@ run/main_scene="res://scenes/Main.tscn"
 
 [autoload]
 
-GDMosquitto="*res://addons/mosquitto/GDMosquittoUtils.gd"
+GDMosquitto="*res://addons/GDMosquitto/GDMosquittoUtils.gd"
 
 [display]
 
@@ -23,4 +23,4 @@ window/size/resizable=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/GDCharts/plugin.cfg", "res://addons/mosquitto/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/GDCharts/plugin.cfg" )

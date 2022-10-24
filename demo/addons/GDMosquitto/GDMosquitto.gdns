@@ -1,9 +1,9 @@
 [gd_resource type="NativeScript" load_steps=2 format=2]
 
 [sub_resource type="GDNativeLibrary" id=1]
-entry/OSX.64 = "res://addons/mosquitto/osx/libgdmosquitto.dylib"
-entry/Windows.64 = "res://addons/mosquitto/windows/libgdmosquitto.dll"
-entry/X11.64 = "res://addons/mosquitto/linux/libgdmosquitto.so"
+entry/OSX.64 = "res://addons/GDMosquitto/osx/libgdmosquitto.dylib"
+entry/Windows.64 = "res://addons/GDMosquitto/windows/libgdmosquitto.dll"
+entry/X11.64 = "res://addons/GDMosquitto/linux/libgdmosquitto.so"
 dependency/OSX.64 = [  ]
 dependency/Windows.64 = [  ]
 dependency/X11.64 = [  ]
