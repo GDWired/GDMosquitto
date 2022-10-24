@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/mosquitto/GDMosquitto.gdns" type="Script" id=1]
+[ext_resource path="res://scripts/MQTTPub.gd" type="Script" id=2]
+
+[node name="MQTTPub" type="HBoxContainer"]
+anchor_right = 1.0
+margin_bottom = 40.0
+script = ExtResource( 2 )
+
+[node name="Publish" type="CheckButton" parent="."]
+margin_right = 200.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 200, 40 )
+text = "Publish"
+
+[node name="PublishLabel" type="Label" parent="."]
+margin_left = 204.0
+margin_top = 13.0
+margin_right = 329.0
+margin_bottom = 27.0
+rect_min_size = Vector2( 125, 0 )
+text = "Publish frequency"
+
+[node name="PublishFrequency" type="SpinBox" parent="."]
+margin_left = 333.0
+margin_right = 408.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 75, 0 )
+min_value = 1.0
+value = 1.0
+suffix = "hz"
+
+[node name="MQTTClient" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[connection signal="toggled" from="Publish" to="." method="_on_Publish_toggled"]
+[connection signal="value_changed" from="PublishFrequency" to="." method="_on_PublishFrequency_value_changed"]

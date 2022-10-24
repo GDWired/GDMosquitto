@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/MQTTPub.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/MQTTSub.tscn" type="PackedScene" id=2]
+
+[node name="Main" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+
+[node name="MQTTSub" parent="." instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1004.0
+margin_bottom = 544.0
+
+[node name="MQTTPub" parent="." instance=ExtResource( 1 )]
+anchor_right = 0.0
+margin_top = 548.0
+margin_right = 1004.0
+margin_bottom = 588.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_top = 592.0
+margin_right = 1004.0
+margin_bottom = 592.0

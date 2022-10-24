@@ -1,0 +1,26 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+[application]
+
+config/name="GDMosquitto Demo"
+run/main_scene="res://scenes/Main.tscn"
+
+[autoload]
+
+GDMosquitto="*res://addons/mosquitto/GDMosquittoUtils.gd"
+
+[display]
+
+window/size/resizable=false
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/GDCharts/plugin.cfg", "res://addons/mosquitto/plugin.cfg" )
