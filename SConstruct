@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+import os
+
 env = SConscript("godot-cpp/SConstruct")
 
 env.Append(CPPPATH=['src/'])
 sources = Glob('src/*.cpp')
-
 if env['platform'] == "osx":
     # brew install mosquitto
     env.Append(CPPPATH=["/opt/homebrew/include"])
@@ -15,8 +16,9 @@ elif env['platform'] in ('x11', 'linux'):
     #env.Append(LIBPATH=["/usr/lib"])
     env.Append(LIBS=["libmosquittopp"])
 if env['platform'] == "windows":
-    env.Append(CPPPATH=["C:\Program Files\mosquitto\devel"])
-    env.Append(LIBPATH=["C:\Program Files\mosquitto\devel"])
+    # Assume that mosquitto/devel is in the path
+    env.Append(CPPPATH=[os.environ['PATH'].split(';')])
+    env.Append(LIBPATH=[os.environ['PATH'].split(';')])
     env.Append(LIBS=["mosquittopp"])
 
 # Create lib
