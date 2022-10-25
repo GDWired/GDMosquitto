@@ -6,6 +6,7 @@ env.Append(CPPPATH=['src/'])
 sources = Glob('src/*.cpp')
 
 if env['platform'] == "osx":
+    # brew install mosquitto
     env.Append(CPPPATH=["/opt/homebrew/include"])
     env.Append(LIBPATH=["/opt/homebrew/lib"])
     env.Append(LIBS=["libmosquittopp"])
