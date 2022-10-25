@@ -22,7 +22,6 @@ func _ready() -> void:
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
 	_mqtt_client.broker_connect(broker_address, broker_port, broker_keep_alive)
-	_mqtt_client.loop_start();
 	
 	# Init values from UI
 	_loop = _publish_button.pressed
@@ -33,7 +32,6 @@ func _notification(what: int) -> void:
 	# Clean everything when program is closed
 	if what == NOTIFICATION_WM_QUIT_REQUEST:
 		_mqtt_client.broker_disconnect()
-		_mqtt_client.loop_stop(false)
 
 
 func _process(delta: float) -> void:

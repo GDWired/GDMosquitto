@@ -11,18 +11,27 @@ export var broker_keep_alive: int = 60
 var _time: float = 0.0
 var _data: Array = []
 var _refresh_time: float = 1
+var _loop_start_supported: bool = true
+var _loop_thread: Thread = null
 
 onready var _mqtt_client : Node = $MQTTClient
 onready var _chart : Node = $GDCharts # Not a part of this plugin (https://github.com/binogure-studio/chart-gd)
 onready var _subscribe_button : Node = $Buttons/Subscribe
 onready var _refresh_time_spin : SpinBox = $Buttons/RefreshTime
-
+  
 
 func _ready() -> void:
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
 	_mqtt_client.broker_connect(broker_address, broker_port, broker_keep_alive)
-	_mqtt_client.loop_start();
+	_loop_start_supported = not (_mqtt_client.loop_start() == GDMosquitto.RC.MOSQ_ERR_NOT_SUPPORTED)
+	
+	# On Windows, mosquitto is not compiled with pthread...
+	if not _loop_start_supported:
+		_mqtt_client.threaded_set(true)
+		_loop_thread = Thread.new()
+		if _loop_thread.start(self, "_mqtt_client_loop") != OK:
+			printerr("Error while the loop thread is created")
 	
 	# Init chart
 	_chart.initialize(_chart.LABELS_TO_SHOW.NO_LABEL, {sinus_x = Color(1.0, 0.18, 0.18)})
@@ -34,11 +43,18 @@ func _ready() -> void:
 	_refresh_time = _refresh_time_spin.value
 
 
+func _mqtt_client_loop():
+	_mqtt_client.loop_forever(0)
+
+
 func _notification(what: int) -> void:
 	# Clean everything when program is closed
 	if what == NOTIFICATION_WM_QUIT_REQUEST:
 		_mqtt_client.broker_disconnect()
-		_mqtt_client.loop_stop(false)
+		if _loop_start_supported:
+			_mqtt_client.loop_stop(false)
+		else:
+			_loop_thread.wait_to_finish()
 
 
 func _process(delta: float) -> void:
@@ -46,12 +62,7 @@ func _process(delta: float) -> void:
 	_time += delta
 	if _time >= _refresh_time:
 		for d in _data:
-			_chart.create_new_point({
-				label = d[0],
-					values = {
-					  sinus_x = d[1]
-					}
-				})
+			_chart.create_new_point({label = d[0], values = { sinus_x = d[1] }})
 		_data.clear()
 		_time = 0.0
 

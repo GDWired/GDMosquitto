@@ -219,8 +219,10 @@ int GDMosquitto::publish(const String p_topic, const String p_payload, const int
 		return MOSQ_ERR_NOTINIT;
 	}
 	int l_id;
-	const auto& l_data = p_payload.utf8();
-	int l_rc = m_wrapper->publish(&l_id, p_topic.utf8().get_data(), l_data.length(), l_data.get_data(), p_qos, p_retain);
+	// Workaround because on Windows utf8 seems corrupted
+	const auto& l_data = p_payload.alloc_c_string();
+	int l_rc = m_wrapper->publish(&l_id, p_topic.utf8().get_data(), p_payload.length() + 1, l_data, p_qos, p_retain);
+	godot::api->godot_free(l_data);
 	if (!l_rc) {
 		emit_signal("message_id_updated", l_id, p_topic, MESSAGE_ID_ACTION_PUBLISH);
 	}

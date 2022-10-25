@@ -14,5 +14,5 @@ X11.64="res://addons/GDMosquitto/linux/libgdmosquitto.so"
 [dependencies]
 
 OSX.64=[  ]
-Windows.64=[  ]
+Windows.64=[ "res://addons/GDMosquitto/windows/libcrypto-1_1-x64.dll", "res://addons/GDMosquitto/windows/libssl-1_1-x64.dll", "res://addons/GDMosquitto/windows/mosquitto.dll", "res://addons/GDMosquitto/windows/mosquittopp.dll", "res://addons/GDMosquitto/windows/mosquitto_dynamic_security.dll" ]
 X11.64=[  ]

@@ -23,4 +23,4 @@ window/size/resizable=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/GDCharts/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/GDCharts/plugin.cfg", "res://addons/GDMosquitto/plugin.cfg" )

@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/GDMosquitto/GDMosquitto.gdns" type="Script" id=1]
+[ext_resource path="res://scripts/MQTTPush.gd" type="Script" id=2]
+
+[node name="MQTTPush" type="HBoxContainer"]
+anchor_right = 1.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 0, 25 )
+script = ExtResource( 2 )
+
+[node name="Publish" type="Button" parent="."]
+margin_right = 200.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 200, 25 )
+text = "Publish"
+
+[node name="Text" type="LineEdit" parent="."]
+margin_left = 204.0
+margin_right = 404.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 200, 25 )
+
+[node name="MQTTClient" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[connection signal="pressed" from="Publish" to="." method="_on_Publish_pressed"]

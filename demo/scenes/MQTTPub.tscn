@@ -11,24 +11,24 @@ script = ExtResource( 2 )
 [node name="Publish" type="CheckButton" parent="."]
 margin_right = 200.0
 margin_bottom = 40.0
-rect_min_size = Vector2( 200, 40 )
+rect_min_size = Vector2( 200, 25 )
 text = "Publish"
 
 [node name="PublishLabel" type="Label" parent="."]
 margin_left = 204.0
-margin_top = 13.0
 margin_right = 329.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 125, 0 )
+margin_bottom = 40.0
+rect_min_size = Vector2( 125, 40 )
 text = "Publish frequency"
+valign = 1
 
 [node name="PublishFrequency" type="SpinBox" parent="."]
 margin_left = 333.0
 margin_right = 408.0
 margin_bottom = 40.0
-rect_min_size = Vector2( 75, 0 )
+rect_min_size = Vector2( 75, 40 )
 min_value = 1.0
-value = 1.0
+value = 10.0
 suffix = "hz"
 
 [node name="MQTTClient" type="Node" parent="."]

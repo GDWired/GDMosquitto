@@ -13,8 +13,12 @@ elif env['platform'] in ('x11', 'linux'):
     env.Append(CPPPATH=["/usr/include"])
     env.Append(LIBPATH=["/usr/lib"])
     env.Append(LIBS=["libmosquittopp"])
+if env['platform'] == "windows":
+    env.Append(CPPPATH=["C:\Program Files\mosquitto\devel"])
+    env.Append(LIBPATH=["C:\Program Files\mosquitto\devel"])
+    env.Append(LIBS=["mosquittopp"])
 
 # Create lib
 sources = Glob("src/*.cpp")
-library = env.SharedLibrary("demo/addons/mosquitto/{}/libgdmosquitto{}".format(env['platform'], env["SHLIBSUFFIX"]), source=sources)
+library = env.SharedLibrary("demo/addons/GDMosquitto/{}/libgdmosquitto{}".format(env['platform'], env["SHLIBSUFFIX"]), source=sources)
 Default(library)
