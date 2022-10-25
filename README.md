@@ -1,6 +1,13 @@
 # GDMosquitto
 Mosquitto addon for Godot3.5!
 
+<img width="1136" alt="Capture d’écran 2022-10-25 à 21 17 36" src="https://user-images.githubusercontent.com/4105962/197862495-2d376e52-c780-4551-be5a-c9a95795d2d0.png">
+
+In the picture:
+ - The first line is the subscription parameters, subscribe to the SIN topic and expect JSON formatted data like [t,sin(t)] and plot it.
+ - The second line is the pulisher parameters, publish JSON formatted data to the SIN topic [t,sin(t)].
+ - The last line sends the text from the first edit line to the topic DATA (the second edit line subscribes to DATA and displays the sent text).
+
 Works on Linux, macOS and Windows. On Windows, pthreads can be used but the behavior is not clean, without pthread, there are some lost packages... mosquitto version 2.1 should solve this thread problem.
 
 To compile it
