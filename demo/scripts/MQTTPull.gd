@@ -12,7 +12,7 @@ var _loop_start_supported: bool = true
 var _loop_thread: Thread = null
 
 onready var _mqtt_client : Node = $MQTTClient
-onready var _data : LineEdit = $Data
+onready var _data : Node = $Data
 
 func _ready() -> void:
 	# Init the client
@@ -28,7 +28,7 @@ func _ready() -> void:
 			printerr("Error while the loop thread is created")
 	
 	# Init values from UI
-	_mqtt_client.subscribe("DATA", 0)
+	_mqtt_client.subscribe("DATA", 1)
 
 
 
@@ -49,5 +49,8 @@ func _notification(what: int) -> void:
 
 func _on_MQTTClient_received(_message_id: int, _topic: String, payload: String) -> void:
 	# MQTT data received
-	_data.text = payload
+	if payload == "":
+		_data.text = "<empty>"
+	else:
+		_data.text = payload
 

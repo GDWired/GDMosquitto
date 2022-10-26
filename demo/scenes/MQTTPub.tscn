@@ -24,9 +24,10 @@ valign = 1
 
 [node name="PublishFrequency" type="SpinBox" parent="."]
 margin_left = 333.0
-margin_right = 408.0
+margin_right = 407.0
 margin_bottom = 40.0
-rect_min_size = Vector2( 75, 40 )
+rect_min_size = Vector2( 25, 40 )
+size_flags_vertical = 0
 min_value = 1.0
 value = 10.0
 suffix = "hz"

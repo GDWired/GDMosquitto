@@ -75,7 +75,7 @@ func _on_MQTTClient_received(_message_id: int, _topic: String, payload: String) 
 
 func _on_Subscribe_toggled(button_pressed: bool) -> void:
 	if button_pressed:
-		_mqtt_client.subscribe("SIN", 0)
+		_mqtt_client.subscribe("SIN", 1)
 	else:
 		_mqtt_client.unsubscribe("SIN")
 

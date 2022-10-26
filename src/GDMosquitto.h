@@ -37,6 +37,7 @@ namespace godot {
 	 * 	- loop_start
 	 * 	- loop
 	 * 	- loop_read
+	 *  - loop_forever
 	 * 	- subscribe (some topics)
 	 * 	- publish (some topics regulary)
 	 * 	- reconnect
@@ -63,7 +64,7 @@ namespace godot {
 	 * 	- threaded_set
 	 * 	- socks5_set
 	 * 
-	 * QoS behaviour is not really tested (only QoS 0 is used in my tests)	
+	 * QoS behaviour is not really tested (only QoS 0 and 1 are used in my tests)	
 	 * Connect with flags seems to returns not a good flags (always 0)
 	 */
 	class GDMosquitto : public Reference {
