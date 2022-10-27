@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 
 env = SConscript("godot-cpp/SConstruct")
 
@@ -20,6 +21,18 @@ if env['platform'] == "windows":
     env.Append(CPPPATH=[os.environ['PATH'].split(';')])
     env.Append(LIBPATH=[os.environ['PATH'].split(';')])
     env.Append(LIBS=["mosquittopp"])
+if env['platform'] == "android":
+    # brew install mosquitto
+    env.Append(CPPPATH=["android/include"])
+    if env["android_arch"] == "arm64v8":
+        env.Append(LIBPATH=["android/lib/arm64-v8a"])
+        env['platform'] += "/arm64-v8a"
+    else:
+        env.Append(LIBPATH=["android/lib/armeabi-v7a"])
+        env['platform'] += "/armeabi-v7a"
+    env.Append(LIBS=["libmosquittopp"])
+    if sys.platform == "darwin":
+        env.Append(LINKFLAGS=["-shared"])
 
 # Create lib
 sources = Glob("src/*.cpp")

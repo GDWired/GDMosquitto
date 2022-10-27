@@ -7,12 +7,16 @@ reloadable=true
 
 [entry]
 
+Android.armeabi-v7a="res://addons/GDMosquitto/android/armeabi-v7a/libgdmosquitto.so"
+Android.arm64-v8a="res://addons/GDMosquitto/android/arm64-v8a/libgdmosquitto.so"
 OSX.64="res://addons/GDMosquitto/osx/libgdmosquitto.dylib"
 Windows.64="res://addons/GDMosquitto/windows/libgdmosquitto.dll"
 X11.64="res://addons/GDMosquitto/linux/libgdmosquitto.so"
 
 [dependencies]
 
+Android.armeabi-v7a=[  ]
+Android.arm64-v8a=[  ]
 OSX.64=[  ]
 Windows.64=[ "res://addons/GDMosquitto/windows/libcrypto-1_1-x64.dll", "res://addons/GDMosquitto/windows/libssl-1_1-x64.dll", "res://addons/GDMosquitto/windows/mosquitto.dll", "res://addons/GDMosquitto/windows/mosquittopp.dll", "res://addons/GDMosquitto/windows/mosquitto_dynamic_security.dll" ]
 X11.64=[  ]
