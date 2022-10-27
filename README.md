@@ -8,24 +8,34 @@ In the picture:
  - The second line is the pulisher parameters, publish JSON formatted data to the SIN topic [t,sin(t)].
  - The last line sends the text from the first edit line to the topic DATA (the second edit line subscribes to DATA and displays the sent text).
 
-Works on Linux, macOS and Windows. On Windows, pthreads can be used but the behavior is not clean, without pthread, there are some lost packages... mosquitto version 2.1 should solve this thread problem.
-
 To compile it
  - Run git clone --recurse-submodules https://github.com/jferdelyi/GDMosquitto.git
  - Install the Godot dependencies (https://docs.godotengine.org/en/stable/development/compiling/index.html)
  - Run scons on the root folder.
  - Start Godot3.5 and open the project in the demo folder
 
-No exports are tested.
+Works on editor and exports for Windows, Linux and macOS. By default, the Windows version is compiled without pthreads and loop_start is not usable (mosquitto version 2.1 should solve this thread problem). You can recompile it to use loop_start or use this workaround:
 
-Methods not implemented (not easy or because I'm not sure how to test them)
+```
+func _ready() -> void:
+	_mqtt_client.initialise(client_id, clean_session)
+	_mqtt_client.broker_connect(broker_address, broker_port, broker_keep_alive)
+	_loop_start_supported = not (_mqtt_client.loop_start() == GDMosquitto.RC.MOSQ_ERR_NOT_SUPPORTED)
+	
+	if not _loop_start_supported:
+		_mqtt_client.threaded_set(true)
+		_loop_thread = Thread.new()
+		if _loop_thread.start(self, "_mqtt_client_loop") != OK:
+			printerr("Error while the loop thread is created")
+
+func _mqtt_client_loop() -> void:
+	_mqtt_client.loop_forever(0)
+```
+However, the behavior on Windows is not exactly the same. If QoS 0 is used, there are some lost packets (it's ok with QoS 1).
+
+Methods not implemented
+ - opts_set (I have implemented set_protocol_version for the protocol version, but I don't know how to implement set_ssl_ctx, if someone needs it, I will ask)
  - message_retry_set (no effect now, will never be implemented)
- - user_data_set
- - opts_set (mosquitto_int_option is provided for integer options only, easy to implement but MOSQ_OPT_SSL_CTX is impossible to set)
- - int tls_set
- - int tls_opts_set
- - int tls_insecure_set
- - int tls_psk_set
 
 Never tested methods (returns rc=0 but has never been tested further)
  - reinitialise
@@ -44,6 +54,11 @@ Never tested methods (returns rc=0 but has never been tested further)
  - want_write
  - threaded_set
  - socks5_set
+ - user_data_set
+ - int tls_set
+ - int tls_opts_set
+ - int tls_insecure_set
+ - int tls_psk_set
 
-QoS behaviour is not really tested (only QoS 0 durring tests)	
+QoS behaviour is not really tested (QoS 0 and 1 durring tests)	
 Connect with flags seems not returns good flags (always 0)
