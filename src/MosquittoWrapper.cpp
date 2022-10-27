@@ -47,3 +47,15 @@ void MosquittoWrapper::on_log(int p_level, const char* p_str) /*override*/ {
 void MosquittoWrapper::on_error() /*override*/ {
 	m_mqtt_client.emit_on_error();
 }
+
+int MosquittoWrapper::call_callback(char* p_buf, int p_size, int p_rwflag) {
+	Array l_arguments;
+	l_arguments.append(p_size);
+	l_arguments.append(p_rwflag);
+	String l_password = m_mqtt_client.call("s_pw_callback", l_arguments);
+	
+	const char* l_char_password = l_password.utf8().get_data();
+	strncpy(p_buf, l_char_password, p_size);
+    p_buf[p_size - 1] = '\0';
+	return strlen(p_buf);
+}

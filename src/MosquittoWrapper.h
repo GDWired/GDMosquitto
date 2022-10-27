@@ -84,6 +84,15 @@ class MosquittoWrapper : public mosqpp::mosquittopp {
 		 * Override on_error
 		 */
 		void on_error() override;
+
+		/**
+		 * Callback pw_callback
+		 * @param p_buf the callback must write the password into “p_buf”
+		 * @param p_size the size (bytes long) of the buffer
+		 * @param p_rwflag ????
+		 * @return size of the password
+		 */
+		int call_callback(char* p_buf, int p_size, int p_rwflag);
 };
 
 #endif //MOSQUITTO_WRAPPER_H

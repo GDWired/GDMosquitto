@@ -8,7 +8,7 @@
 
 using namespace godot;
 
-GDMosquitto::GDMosquitto() : m_wrapper(nullptr), m_buf_size(DEFAULT_BUFFER_SIZE), m_buf(new char[DEFAULT_BUFFER_SIZE]) {
+GDMosquitto::GDMosquitto() : m_wrapper(nullptr), m_buf_size(DEFAULT_BUFFER_SIZE), m_buf(new char[DEFAULT_BUFFER_SIZE]), m_pw_callback(), m_userdata() {
 	// Can return MOSQ_ERR_UNKNOWN on Windows if sockets couldn't be initialized
 	if (mosqpp::lib_init()) {
 		ERR_PRINT("Mosquitto lib init error: sockets couldn't be initialized");
@@ -47,7 +47,14 @@ void GDMosquitto::_register_methods() {
 	register_method("unsubscribe", &GDMosquitto::unsubscribe);
 	register_method("reconnect_delay_set", &GDMosquitto::reconnect_delay_set);
 	register_method("max_inflight_messages_set", &GDMosquitto::max_inflight_messages_set);
-	register_method("int_opts_set", &GDMosquitto::int_opts_set);
+	//register_method("message_retry_set", &GDMosquitto::message_retry_set); // No effect now, will never be implemented 
+	register_method("user_data_set", &GDMosquitto::user_data_set); 
+	register_method("tls_set", &GDMosquitto::tls_set);
+	register_method("tls_opts_set", &GDMosquitto::tls_opts_set);
+	register_method("tls_insecure_set", &GDMosquitto::tls_insecure_set);
+	register_method("tls_psk_set", &GDMosquitto::tls_psk_set);
+	register_method("set_protocol_version", &GDMosquitto::set_protocol_version);
+	register_method("set_ssl_ctx", &GDMosquitto::set_ssl_ctx);
 	
 	register_method("loop", &GDMosquitto::loop);
 	register_method("loop_misc", &GDMosquitto::loop_misc);
@@ -121,6 +128,7 @@ void GDMosquitto::realloc_buffer(const size_t p_payload_size) {
 
 int GDMosquitto::initialise(const String p_id, const bool p_clean_session) {
 	m_wrapper = new MosquittoWrapper(*this, p_id.utf8().get_data(), p_clean_session);
+	
 	if (errno == ENOMEM) {
 		return MOSQ_ERR_NOMEM;
 	} else if (errno == EINVAL) {
@@ -267,12 +275,50 @@ int GDMosquitto::max_inflight_messages_set(const unsigned int p_max_inflight_mes
 	}
 	return m_wrapper->max_inflight_messages_set(p_max_inflight_messages);
 }
-			
-int GDMosquitto::int_opts_set(const int p_option, int p_value) {
+
+void GDMosquitto::user_data_set(Variant p_userdata) {
+	m_userdata = p_userdata;
+	return m_wrapper->user_data_set(&m_userdata);
+}
+
+int GDMosquitto::tls_set(const String p_cafile, const String p_capath, const String p_certfile, const String p_keyfile, const String p_pw_callback) {
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	return m_wrapper->opts_set(static_cast<mosq_opt_t>(p_option), static_cast<void*>(&p_value));
+	m_pw_callback = p_pw_callback;
+	return m_wrapper->tls_set(p_cafile.utf8().get_data(), p_capath.utf8().get_data(), p_certfile.utf8().get_data(), p_keyfile.utf8().get_data(), pw_callback);
+}
+
+int GDMosquitto::tls_opts_set(const int p_cert_reqs, const String p_tls_version, const String p_ciphers) {
+	if (!m_wrapper) {
+		return MOSQ_ERR_NOTINIT;
+	}
+	return m_wrapper->tls_opts_set(p_cert_reqs, p_tls_version.utf8().get_data(), p_ciphers.utf8().get_data());
+}
+
+int GDMosquitto::tls_insecure_set(const bool p_value) {
+	if (!m_wrapper) {
+		return MOSQ_ERR_NOTINIT;
+	}
+	return m_wrapper->tls_insecure_set(p_value);
+}
+
+int GDMosquitto::tls_psk_set(const String p_psk, const String p_identity, const String p_ciphers) {
+	if (!m_wrapper) {
+		return MOSQ_ERR_NOTINIT;
+	}
+	return m_wrapper->tls_psk_set(p_psk.utf8().get_data(), p_identity.utf8().get_data(), p_ciphers.utf8().get_data());
+}
+			
+int GDMosquitto::set_protocol_version(int p_value) {
+	if (!m_wrapper) {
+		return MOSQ_ERR_NOTINIT;
+	}
+	return m_wrapper->opts_set(MOSQ_OPT_PROTOCOL_VERSION, static_cast<void*>(&p_value));
+}
+
+int GDMosquitto::set_ssl_ctx(int p_value) {
+	return MOSQ_ERR_NOT_SUPPORTED;
 }
 
 int GDMosquitto::loop(const int p_timeout) {
@@ -343,6 +389,27 @@ int GDMosquitto::socks5_set(const String p_host, const int p_port, const String 
 		return MOSQ_ERR_NOTINIT;
 	}
 	return m_wrapper->socks5_set(p_host.utf8().get_data(), p_port, p_username.utf8().get_data(), p_password.utf8().get_data());
+}
+
+//###############################################################
+//	Callback
+//###############################################################
+
+int GDMosquitto::pw_callback(char* p_buf, int p_size, int p_rwflag, void* p_userdata) {
+	MosquittoWrapper* l_mosquitto_instance = reinterpret_cast<MosquittoWrapper*>(p_userdata);
+	return l_mosquitto_instance->call_callback(p_buf, p_size, p_rwflag);
+}
+
+int GDMosquitto::call_callback(char* p_buf, int p_size, int p_rwflag) {
+	Array l_arguments;
+	l_arguments.append(p_size);
+	l_arguments.append(p_rwflag);
+	String l_password = call(m_pw_callback, l_arguments);
+	
+	const char* l_char_password = l_password.utf8().get_data();
+	strncpy(p_buf, l_char_password, p_size);
+    p_buf[p_size - 1] = '\0';
+	return strlen(p_buf);
 }
 
 //###############################################################

@@ -1,9 +1,11 @@
 #ifndef GDMOSQUITTO
 #define GDMOSQUITTO
 
+#include <map>
 #include <Godot.hpp>
 #include <Reference.hpp>
 #include <mosquitto.h>
+#include <mosquittopp.h>
 
 #define DEFAULT_BUFFER_SIZE 50
 #define MOSQ_ERR_NOTINIT -1000
@@ -86,6 +88,16 @@ namespace godot {
 			 * Bufer size by default = 10
 			 */
 			size_t m_buf_size;
+
+			/**
+			 * Callback name (pw_callback)
+			 */
+			String m_pw_callback;
+
+			/**
+			 * Userdata
+			 */
+			Variant m_userdata;
 
 		// Private methods
 		private:
@@ -271,57 +283,73 @@ namespace godot {
 			int max_inflight_messages_set(const unsigned int p_max_inflight_messages);
 			
 			/**
-			 * Used to set integer options for the client
-			 * Options:
-			 *	MOSQ_OPT_TCP_NODELAY - Set to 1 to disable Nagle's algorithm on client
-			 *	          sockets. This has the effect of reducing latency of individual
-			 *	          messages at the potential cost of increasing the number of
-			 *	          packets being sent.
-			 *	          Defaults to 0, which means Nagle remains enabled.
-			 *
-			 *	MOSQ_OPT_PROTOCOL_VERSION - Value must be set to either MQTT_PROTOCOL_V31,
-			 *	          MQTT_PROTOCOL_V311, or MQTT_PROTOCOL_V5. Must be set before the
-			 *	          client connects.  Defaults to MQTT_PROTOCOL_V311.
-			 *
-			 *	MOSQ_OPT_RECEIVE_MAXIMUM - Value can be set between 1 and 65535 inclusive,
-			 *	          and represents the maximum number of incoming QoS 1 and QoS 2
-			 *	          messages that this client wants to process at once. Defaults to
-			 *	          20. This option is not valid for MQTT v3.1 or v3.1.1 clients.
-			 *	          Note that if the MQTT_PROP_RECEIVE_MAXIMUM property is in the
-			 *	          proplist passed to mosquitto_connect_v5(), then that property
-			 *	          will override this option. Using this option is the recommended
-			 *	          method however.
-			 *
-			 *	MOSQ_OPT_SEND_MAXIMUM - Value can be set between 1 and 65535 inclusive,
-			 *	          and represents the maximum number of outgoing QoS 1 and QoS 2
-			 *	          messages that this client will attempt to have "in flight" at
-			 *	          once. Defaults to 20.
-			 *	          This option is not valid for MQTT v3.1 or v3.1.1 clients.
-			 *	          Note that if the broker being connected to sends a
-			 *	          MQTT_PROP_RECEIVE_MAXIMUM property that has a lower value than
-			 *	          this option, then the broker provided value will be used.
-			 *
-			 *	MOSQ_OPT_SSL_CTX_WITH_DEFAULTS - If value is set to a non zero value,
-			 *	          then the user specified SSL_CTX passed in using MOSQ_OPT_SSL_CTX
-			 *	          will have the default options applied to it. This means that
-			 *	          you only need to change the values that are relevant to you.
-			 *	          If you use this option then you must configure the TLS options
-			 *	          as normal, i.e.  you should use <mosquitto_tls_set> to
-			 *	          configure the cafile/capath as a minimum.
-			 *	          This option is only available for openssl 1.1.0 and higher.
-			 *
-			 *	MOSQ_OPT_TLS_OCSP_REQUIRED - Set whether OCSP checking on TLS
-			 *	          connections is required. Set to 1 to enable checking,
-			 *	          or 0 (the default) for no checking.
-			 *
-			 *	MOSQ_OPT_TLS_USE_OS_CERTS - Set to 1 to instruct the client to load and
-			 *	          trust OS provided CA certificates for use with TLS connections.
-			 *	          Set to 0 (the default) to only use manually specified CA certs.
-			 * @param p_option a valid mosquitto instance.
-			 * @param p_value the option specific value
+			 * When mosquitto_new is called, the pointer given as the “obj” parameter will be passed to the callbacks as user data.
+			 * The mosquitto_user_data_set function allows this obj parameter to be updated at any time.
+			 * This function will not modify the memory pointed to by the current user data pointer.
+			 * If it is dynamically allocated memory you must free it yourself.
+			 * @param p_userdata data that will be passed as an argument to any callbacks that are specified.
+			 */
+			void user_data_set(Variant p_userdata);
+
+			/**
+			 * Configure the client for certificate based SSL/TLS support.  Must be called before mosquitto_connect.
+			 * Cannot be used in conjunction with mosquitto_tls_psk_set.
+			 * Define the Certificate Authority certificates to be trusted (ie. the server certificate must be signed with one of these certificates) using cafile.
+			 * If the server you are connecting to requires clients to provide a certificate, define certfile and keyfile with your client certificate and private key.  
+			 * If your private key is encrypted, provide a password callback function or you will have to enter the password at the command line.
+			 * @param p_cafile path to a file containing the PEM encoded trusted CA certificate files.  Either cafile or capath must not be NULL.
+			 * @param p_capath path to a directory containing the PEM encoded trusted CA certificate files.  See mosquitto.conf for more details on configuring this directory.  Either cafile or capath must not be NULL.
+			 * @param p_certfile path to a file containing the PEM encoded certificate file for this client.  If NULL, keyfile must also be NULL and no client certificate will be used.
+			 * @param p_keyfile path to a file containing the PEM encoded private key for this client.  If NULL, certfile must also be NULL and no client certificate will be used.
+			 * @param p_pw_callback if keyfile is encrypted, set pw_callback to allow your client to pass the correct password for decryption.  If set to NULL, the password must be entered on the command line.  Your callback must write the password into “buf”, which is “size” bytes long.  The return value must be the length of the password. “userdata” will be set to the calling mosquitto instance.  The mosquitto userdata member variable can be retrieved using mosquitto_userdata.
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int int_opts_set(const int p_option, int p_value);
+			int tls_set(const String p_cafile, const String p_capath, const String p_certfile, const String p_keyfile, const String p_pw_callback);
+			
+			/**
+			 * Set advanced SSL/TLS options.  Must be called before mosquitto_connect.
+			 * @param p_cert_reqs an integer defining the verification requirements the client will impose on the server. This can be one of: SSL_VERIFY_NONE (0) or SSL_VERIFY_PEER (1)
+			 * @param p_tls_version the version of the SSL/TLS protocol to use as a string. If NULL, the default value is used. The default value and the available values depend on the version of openssl that the library was compiled against.  For openssl >= 1.0.1, the available options are tlsv1.2, tlsv1.1 and tlsv1, with tlv1.2 as the default. For openssl < 1.0.1, only tlsv1 is available.
+			 * @param p_ciphers a string describing the ciphers available for use. See the “openssl ciphers” tool for more information. If NULL, the default ciphers will be used.
+			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+			 */
+			int tls_opts_set(const int p_cert_reqs, const String p_tls_version, const String p_ciphers);
+			
+			/**
+			 * Configure verification of the server hostname in the server certificate.  
+			 * If value is set to true, it is impossible to guarantee that the host you are connecting to is not impersonating your server.  
+			 * This can be useful in initial server testing, but makes it possible for a malicious third party to impersonate your server through DNS spoofing, for example.  
+			 * Do not use this function in a real system.  Setting value to true makes the connection encryption pointless.  
+			 * Must be called before mosquitto_connect.
+			 * @param p_value if set to false, the default, certificate hostname checking is performed.  If set to true, no hostname checking is performed and the connection is insecure
+			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+			 */
+			int tls_insecure_set(const bool p_value);
+			
+			/**
+			 * Configure the client for pre-shared-key based TLS support.  
+			 * Must be called before mosquitto_connect.
+			 * Cannot be used in conjunction with mosquitto_tls_set.
+			 * @param p_psk the pre-shared-key in hex format with no leading “0x”
+			 * @param p_identity the identity of this client.  May be used as the username depending on the server settings
+			 * @param p_ciphers a string describing the PSK ciphers available for use.  See the “openssl ciphers” tool for more information.  If NULL, the default ciphers will be used
+			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+			 */
+			int tls_psk_set(const String p_psk, const String p_identity, const String p_ciphers);
+			
+			/**
+			 * Set protocol version
+			 * @param p_value the option specific value MQTT_PROTOCOL_V31 = 3,MQTT_PROTOCOL_V311 = 4,MQTT_PROTOCOL_V5 = 5
+			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+			 */
+			int set_protocol_version(int p_value);
+
+			/**
+			 * Set ssl ctx
+			 * @param p_value SSLv23 = 0, TLS = 1
+			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+			 */
+			int set_ssl_ctx(int p_value);
 			
 			/**
 			 * The main network loop for the client. This must be called frequently
@@ -416,6 +444,10 @@ namespace godot {
 		// Public methods
 		public:
 
+			//###############################################################
+			//	Constructor
+			//###############################################################
+
 			/**
 			 * Constructor
 			 */
@@ -439,6 +471,29 @@ namespace godot {
 			 * Init the class
 			 */
 			void _init();
+
+			//###############################################################
+			//	Callbacks
+			//###############################################################
+
+			/**
+			 * Password callback
+			 * @param p_buf the callback must write the password into “p_buf”...
+			 * @param p_size ...which is “p_size” bytes long
+			 * @param p_rwflag ????
+			 * @param userdata will be set to the calling mosquitto instance
+			 * @return must be the length of the password
+			 */
+			static int pw_callback(char* p_buf, int p_size, int p_rwflag, void* p_userdata);
+
+			/**
+			 * Callback pw_callback
+			 * @param p_buf the callback must write the password into “p_buf”
+			 * @param p_size the size (bytes long) of the buffer
+			 * @param p_rwflag ????
+			 * @return size of the password
+			 */
+			int call_callback(char* p_buf, int p_size, int p_rwflag);
 
 			//###############################################################
 			//	Emit handlers
@@ -505,8 +560,7 @@ namespace godot {
 			 * Emit on_error
 			 */
 			void emit_on_error();
-	}; 
-
+	};
 }
 
 #endif // GDMOSQUITTO

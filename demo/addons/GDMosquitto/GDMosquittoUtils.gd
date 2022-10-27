@@ -54,31 +54,6 @@ enum Protocol {
 }
 
 
-# Client options
-# MOSQ_OPT_TCP_NODELAY - Set to 1 to disable Nagle's algorithm on client
-# MOSQ_OPT_PROTOCOL_VERSION - Value must be set to either MQTT_PROTOCOL_V31,
-# MOSQ_OPT_RECEIVE_MAXIMUM - Value can be set between 1 and 65535 inclusive,
-# MOSQ_OPT_SEND_MAXIMUM - Value can be set between 1 and 65535 inclusive,
-# MOSQ_OPT_SSL_CTX_WITH_DEFAULTS - If value is set to a non zero value,
-# MOSQ_OPT_TLS_OCSP_REQUIRED - Set whether OCSP checking on TLS
-# MOSQ_OPT_TLS_USE_OS_CERTS - Set to 1 to instruct the client to load and
-enum Options {
-	MOSQ_OPT_PROTOCOL_VERSION = 1,
-	#MOSQ_OPT_SSL_CTX = 2,
-	MOSQ_OPT_SSL_CTX_WITH_DEFAULTS = 3,
-	MOSQ_OPT_RECEIVE_MAXIMUM = 4,
-	MOSQ_OPT_SEND_MAXIMUM = 5,
-	#MOSQ_OPT_TLS_KEYFORM = 6,
-	#MOSQ_OPT_TLS_ENGINE = 7,
-	#MOSQ_OPT_TLS_ENGINE_KPASS_SHA1 = 8,
-	MOSQ_OPT_TLS_OCSP_REQUIRED = 9,
-	#MOSQ_OPT_TLS_ALPN = 10,
-	MOSQ_OPT_TCP_NODELAY = 11,
-	#MOSQ_OPT_BIND_ADDRESS = 12,
-	MOSQ_OPT_TLS_USE_OS_CERTS = 13
-}
-
-
 enum MosquittoMessageIdAction {
 	MESSAGE_ID_ACTION_PUBLISH = 0, 
 	MESSAGE_ID_ACTION_SUBSCRIBE = 1, 
