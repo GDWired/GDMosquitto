@@ -1,4 +1,6 @@
-# GDMosquitto
+# <img src="https://user-images.githubusercontent.com/4105962/198399711-db9e4e56-1aae-4e60-88a9-4f96484c1681.png" width="27"> GDMosquitto
+
+
 Mosquitto addon for Godot3.5!
 
 <img width="1136" alt="Capture d’écran 2022-10-27 à 15 27 05" src="https://user-images.githubusercontent.com/4105962/198297381-d3eea888-d09f-4532-a38c-585850918de8.png">
@@ -32,6 +34,12 @@ func _mqtt_client_loop() -> void:
 	_mqtt_client.loop_forever(0)
 ```
 However, the behavior on Windows is not exactly the same. If QoS 0 is used, there are some lost packets (it's ok with QoS 1).
+
+About export on Android: 
+ - Mosquitto build is OK
+ - GDMosquitto build OK
+ - APK/AAB build OK
+ - Runtime KO (on emulator, the application is open but no GDNative call works)
 
 Methods not implemented
  - opts_set (I have implemented set_protocol_version for the protocol version, but I don't know how to implement set_ssl_ctx, if someone needs it, I will ask)
