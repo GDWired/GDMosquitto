@@ -14,6 +14,7 @@ var _loop_thread: Thread = null
 onready var _mqtt_client : Node = $MQTTClient
 onready var _data : Node = $Data
 
+
 func _ready() -> void:
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
@@ -31,7 +32,6 @@ func _ready() -> void:
 	_mqtt_client.subscribe("DATA", 1)
 
 
-
 func _mqtt_client_loop():
 	_mqtt_client.loop_forever(0)
 
@@ -44,7 +44,6 @@ func _notification(what: int) -> void:
 			_mqtt_client.loop_stop(false)
 		else:
 			_loop_thread.wait_to_finish()
-
 
 
 func _on_MQTTClient_received(_message_id: int, _topic: String, payload: String) -> void:

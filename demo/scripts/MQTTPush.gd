@@ -15,6 +15,7 @@ onready var _mqtt_client : Node = $MQTTClient
 onready var _publish_button : Button = $Publish
 onready var _text_to_send : LineEdit = $Text
 
+
 func _ready() -> void:
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
