@@ -12,6 +12,8 @@ config_version=4
 
 config/name="GDMosquitto Demo"
 run/main_scene="res://scenes/Main.tscn"
+boot_splash/image="res://GDMosquitto.png"
+config/icon="res://GDMosquitto.png"
 
 [autoload]
 
