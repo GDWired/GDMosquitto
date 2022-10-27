@@ -1,7 +1,7 @@
 # GDMosquitto
 Mosquitto addon for Godot3.5!
 
-<img width="1136" alt="Capture d’écran 2022-10-25 à 21 17 36" src="https://user-images.githubusercontent.com/4105962/197862495-2d376e52-c780-4551-be5a-c9a95795d2d0.png">
+<img width="1136" alt="Capture d’écran 2022-10-27 à 15 27 05" src="https://user-images.githubusercontent.com/4105962/198297381-d3eea888-d09f-4532-a38c-585850918de8.png">
 
 In the picture:
  - The first line is the subscription parameters, subscribe to the SIN topic and expect JSON formatted data like [t,sin(t)] and plot it.
