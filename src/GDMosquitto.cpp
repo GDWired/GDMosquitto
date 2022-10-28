@@ -408,7 +408,7 @@ int GDMosquitto::call_callback(char* p_buf, int p_size, int p_rwflag) {
 	
 	const char* l_char_password = l_password.utf8().get_data();
 	strncpy(p_buf, l_char_password, p_size);
-    p_buf[p_size - 1] = '\0';
+	p_buf[p_size - 1] = '\0';
 	return strlen(p_buf);
 }
 
