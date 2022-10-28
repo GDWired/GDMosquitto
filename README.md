@@ -41,6 +41,8 @@ Precompiled for Win64, macOS Universal (arm64 and x86_64) and Linux x86_64. Just
 
 ### From source
 If you need specific build (Win32 or Linux arm64 for exemple)
+ - Install Mosquitto (brew install mosquitto, apt install mosquitto ...)
+ - [Windows] Add mosquitto and mosquitto/devel to the path
  - Run git clone --recurse-submodules https://github.com/jferdelyi/GDMosquitto.git
  - Install the Godot dependencies (https://docs.godotengine.org/en/stable/development/compiling/index.html)
  - Run scons on the root folder.
