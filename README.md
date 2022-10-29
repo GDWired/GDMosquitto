@@ -1,4 +1,6 @@
-# <img src="https://user-images.githubusercontent.com/4105962/198399711-db9e4e56-1aae-4e60-88a9-4f96484c1681.png" width="27"> GDMosquitto (Godot 3.5)
+<p align="center"><img src="https://user-images.githubusercontent.com/4105962/198399711-db9e4e56-1aae-4e60-88a9-4f96484c1681.png" width="256"></p>
+
+# <p align="center">GDMosquitto (Godot 3.5)</p>
 
 <img width="1136" alt="Capture d’écran 2022-10-27 à 15 27 05" src="https://user-images.githubusercontent.com/4105962/198297381-d3eea888-d09f-4532-a38c-585850918de8.png">
 
