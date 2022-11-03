@@ -71,7 +71,7 @@ func _notification(what: int) -> void:
 			_loop_thread.wait_to_finish()
 
 
-func subscribe(topic: String, qos: int) -> void:
+func subscribe(topic: String, qos: int = 0) -> void:
 	_mqtt_client.subscribe(topic, qos)
 
 
