@@ -17,6 +17,8 @@ GDMosquitto::GDMosquitto() : m_wrapper(nullptr), m_buf_size(DEFAULT_BUFFER_SIZE)
 
 GDMosquitto::~GDMosquitto() {
 	if (m_wrapper) {
+		m_wrapper->disconnect();
+		m_wrapper->loop_stop();
 		delete m_wrapper;
 	}
 	delete[] m_buf;

@@ -23,7 +23,6 @@ onready var _publish_frequency_spin : SpinBox = $PublishFrequency
 func _ready() -> void:
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
-	yield(get_tree().create_timer(0.5), "timeout")
 	_mqtt_client.broker_connect(broker_address, broker_port, broker_keep_alive)
 	_loop_start_supported = not (_mqtt_client.loop_start() == GDMosquitto.RC.MOSQ_ERR_NOT_SUPPORTED)
 	
@@ -37,7 +36,7 @@ func _ready() -> void:
 	# Init values from UI
 	_loop = _publish_button.pressed
 	_publish_frequency = _publish_frequency_spin.value
-	yield(get_tree().create_timer(0.1), "timeout")
+
 
 func _mqtt_client_loop():
 	_mqtt_client.loop_forever(0)
