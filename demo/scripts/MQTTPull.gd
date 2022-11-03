@@ -13,4 +13,4 @@ func _on_MQTTClient_received(_message_id: int, _topic: String, payload: String) 
 
 
 func _on_MQTTPull_connected(_reason_code: int) -> void:
-	subscribe("DATA", 1)
+	var _rc = subscribe("DATA", 1)

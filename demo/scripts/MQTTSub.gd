@@ -35,9 +35,9 @@ func _on_MQTTClient_received(_message_id: int, _topic: String, payload: String) 
 
 func _on_Subscribe_toggled(button_pressed: bool) -> void:
 	if button_pressed:
-		subscribe("SIN", 1)
+		var _rc = subscribe("SIN", 1)
 	else:
-		unsubscribe("SIN")
+		var _rc = unsubscribe("SIN")
 
 
 func _on_RefreshFrequency_value_changed(value: float) -> void:
@@ -47,4 +47,4 @@ func _on_RefreshFrequency_value_changed(value: float) -> void:
 func _on_MQTTSub_connected(_reason_code: int) -> void:
 	# Init values from UI
 	if _subscribe_button.pressed:
-		subscribe("SIN", 0)
+		var _rc = subscribe("SIN", 0)

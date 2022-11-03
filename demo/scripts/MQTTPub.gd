@@ -21,7 +21,7 @@ func _process(delta: float) -> void:
 	_time += delta
 	_x += delta
 	if _loop and _time >= (1.0 / _publish_frequency):
-		publish("SIN", "[" + str(_x) + "," + str(sin(_x)) + "]", 1)
+		var _rc = publish("SIN", "[" + str(_x) + "," + str(sin(_x)) + "]", 1)
 		_time = 0.0
 
 
