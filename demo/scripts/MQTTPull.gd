@@ -31,7 +31,7 @@ func _ready() -> void:
 	
 	# Init values from UI
 	_mqtt_client.subscribe("DATA", 1)
-
+	yield(get_tree().create_timer(0.1), "timeout")
 
 func _mqtt_client_loop():
 	_mqtt_client.loop_forever(0)

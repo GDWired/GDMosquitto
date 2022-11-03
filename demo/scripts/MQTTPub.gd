@@ -37,7 +37,7 @@ func _ready() -> void:
 	# Init values from UI
 	_loop = _publish_button.pressed
 	_publish_frequency = _publish_frequency_spin.value
-
+	yield(get_tree().create_timer(0.1), "timeout")
 
 func _mqtt_client_loop():
 	_mqtt_client.loop_forever(0)

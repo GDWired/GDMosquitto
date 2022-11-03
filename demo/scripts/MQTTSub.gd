@@ -42,6 +42,7 @@ func _ready() -> void:
 	if _subscribe_button.pressed:
 		_mqtt_client.subscribe("SIN", 0)
 	_refresh_time = _refresh_time_spin.value
+	yield(get_tree().create_timer(0.1), "timeout")
 
 
 func _mqtt_client_loop():

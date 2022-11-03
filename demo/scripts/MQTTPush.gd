@@ -29,7 +29,7 @@ func _ready() -> void:
 		_loop_thread = Thread.new()
 		if _loop_thread.start(self, "_mqtt_client_loop") != OK:
 			printerr("Error while the loop thread is created")
-
+	yield(get_tree().create_timer(0.1), "timeout")
 
 func _mqtt_client_loop():
 	_mqtt_client.loop_forever(0)
