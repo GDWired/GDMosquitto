@@ -71,16 +71,16 @@ func _notification(what: int) -> void:
 			_loop_thread.wait_to_finish()
 
 
-func subscribe(topic: String, qos: int = 0) -> void:
-	_mqtt_client.subscribe(topic, qos)
+func subscribe(topic: String, qos: int = 0) -> int:
+	return _mqtt_client.subscribe(topic, qos)
 
 
-func unsubscribe(topic: String) -> void:
-	_mqtt_client.unsubscribe(topic)
+func unsubscribe(topic: String) -> int:
+	return _mqtt_client.unsubscribe(topic)
 
 
-func publish(topic: String, payload: String, qos: int = 0, retain: bool = false) -> void:
-	_mqtt_client.publish(topic, payload, qos, retain)
+func publish(topic: String, payload: String, qos: int = 0, retain: bool = false) -> int:
+	return _mqtt_client.publish(topic, payload, qos, retain)
 
 
 func _on_MQTTClient_unsubscribed(message_id: int) -> void:
