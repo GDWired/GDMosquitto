@@ -1,6 +1,5 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://addons/GDMosquitto/GDMosquitto.gdns" type="Script" id=1]
 [ext_resource path="res://scripts/MQTTPull.gd" type="Script" id=2]
 
 [node name="MQTTPull" type="HBoxContainer"]
@@ -12,6 +11,7 @@ rect_min_size = Vector2( 0, 25 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
+client_id = "MQTTPull"
 
 [node name="Label" type="Label" parent="."]
 margin_right = 200.0
@@ -29,7 +29,5 @@ rect_min_size = Vector2( 200, 25 )
 text = "<no_data>"
 valign = 1
 
-[node name="MQTTClient" type="Node" parent="."]
-script = ExtResource( 1 )
-
-[connection signal="received" from="MQTTClient" to="." method="_on_MQTTClient_received"]
+[connection signal="connected" from="." to="." method="_on_MQTTPull_connected"]
+[connection signal="received" from="." to="." method="_on_MQTTClient_received"]
