@@ -126,6 +126,24 @@ void GDMosquitto::realloc_buffer(const size_t p_payload_size) {
 	m_buf = new char[m_buf_size];
 }
 
+const char* GDMosquitto::alloc_char_array(const String p_data) {
+	// Workaround because on Windows utf8 seems corrupted
+	if (p_data != "") {
+		return p_data.alloc_c_string();
+	}
+	return nullptr;
+}
+
+void GDMosquitto::free_char_array(const char* p_data) {
+	if (p_data != nullptr) {
+		godot::api->godot_free(const_cast<void*>(static_cast<const void*>(p_data)));
+	}
+}
+
+//###############################################################
+//	Wrapped methods
+//###############################################################
+
 int GDMosquitto::initialise(const String p_id, const bool p_clean_session) {
 	m_wrapper = new MosquittoWrapper(*this, p_id.utf8().get_data(), p_clean_session);
 	
@@ -155,8 +173,18 @@ int GDMosquitto::will_set(const String p_topic, const String p_payload, const in
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	const auto& l_data = p_payload.utf8();
-	return m_wrapper->will_set(p_topic.utf8().get_data(), l_data.length(), l_data.get_data(), p_qos, p_retain);
+	int l_id;
+	const char* l_payload = alloc_char_array(p_payload);
+	size_t l_payload_size = 0;
+	if (l_payload != nullptr) {
+		l_payload_size = strlen(l_payload) + 1;
+	}
+	int l_rc = m_wrapper->will_set(p_topic.utf8().get_data(), l_payload_size, l_payload, p_qos, p_retain);
+	free_char_array(l_payload);
+	if (!l_rc) {
+		emit_signal("message_id_updated", l_id, p_topic, MESSAGE_ID_ACTION_PUBLISH);
+	}
+	return l_rc;
 }
 
 int GDMosquitto::will_clear() {
@@ -170,7 +198,10 @@ int GDMosquitto::username_pw_set(const String p_username, const String p_passwor
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	return m_wrapper->username_pw_set(p_username.utf8().get_data(), p_password.utf8().get_data());
+	const char* l_password = alloc_char_array(p_password);
+	int l_rc = m_wrapper->username_pw_set(p_username.utf8().get_data(), l_password);
+	free_char_array(l_password);
+	return l_rc;
 }
 
 int GDMosquitto::connect(const String p_host, const int p_port, const int p_keepalive) {
@@ -227,10 +258,13 @@ int GDMosquitto::publish(const String p_topic, const String p_payload, const int
 		return MOSQ_ERR_NOTINIT;
 	}
 	int l_id;
-	// Workaround because on Windows utf8 seems corrupted
-	const auto& l_data = p_payload.alloc_c_string();
-	int l_rc = m_wrapper->publish(&l_id, p_topic.utf8().get_data(),	strlen(l_data) + 1, l_data, p_qos, p_retain);
-	godot::api->godot_free(l_data);
+	const char* l_payload = alloc_char_array(p_payload);
+	size_t l_payload_size = 0;
+	if (l_payload != nullptr) {
+		l_payload_size = strlen(l_payload) + 1;
+	}
+	int l_rc = m_wrapper->publish(&l_id, p_topic.utf8().get_data(),	l_payload_size, l_payload, p_qos, p_retain);
+	free_char_array(l_payload);
 	if (!l_rc) {
 		emit_signal("message_id_updated", l_id, p_topic, MESSAGE_ID_ACTION_PUBLISH);
 	}
@@ -285,15 +319,33 @@ int GDMosquitto::tls_set(const String p_cafile, const String p_capath, const Str
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	m_pw_callback = p_pw_callback;
-	return m_wrapper->tls_set(p_cafile.utf8().get_data(), p_capath.utf8().get_data(), p_certfile.utf8().get_data(), p_keyfile.utf8().get_data(), pw_callback);
+	const char* l_capath = alloc_char_array(p_capath);
+	const char* l_certfile = alloc_char_array(p_certfile);
+	const char* l_keyfile = alloc_char_array(p_keyfile);
+	m_pw_callback = "";
+	int l_rc = 0;
+	if (m_pw_callback != "") {
+		m_pw_callback = p_pw_callback;
+		l_rc = m_wrapper->tls_set(p_cafile.utf8().get_data(), l_capath, l_certfile, l_keyfile, pw_callback);
+	} else {		
+		l_rc = m_wrapper->tls_set(p_cafile.utf8().get_data(), l_capath, l_certfile, l_keyfile, NULL);
+	}
+	free_char_array(l_capath);
+	free_char_array(l_certfile);
+	free_char_array(l_keyfile);
+	return l_rc;
 }
 
 int GDMosquitto::tls_opts_set(const int p_cert_reqs, const String p_tls_version, const String p_ciphers) {
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	return m_wrapper->tls_opts_set(p_cert_reqs, p_tls_version.utf8().get_data(), p_ciphers.utf8().get_data());
+	const char* l_tls_version = alloc_char_array(p_tls_version);
+	const char* l_ciphers = alloc_char_array(p_ciphers);
+	int l_rc = m_wrapper->tls_opts_set(p_cert_reqs, l_tls_version, l_ciphers);
+	free_char_array(l_ciphers);
+	free_char_array(l_tls_version);
+	return l_rc;
 }
 
 int GDMosquitto::tls_insecure_set(const bool p_value) {
@@ -307,7 +359,10 @@ int GDMosquitto::tls_psk_set(const String p_psk, const String p_identity, const 
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	return m_wrapper->tls_psk_set(p_psk.utf8().get_data(), p_identity.utf8().get_data(), p_ciphers.utf8().get_data());
+	const char* l_ciphers = alloc_char_array(p_ciphers);
+	int l_rc = m_wrapper->tls_psk_set(p_psk.utf8().get_data(), p_identity.utf8().get_data(), l_ciphers);
+	free_char_array(l_ciphers);
+	return l_rc;
 }
 			
 int GDMosquitto::set_protocol_version(int p_value) {
@@ -388,7 +443,12 @@ int GDMosquitto::socks5_set(const String p_host, const int p_port, const String 
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	return m_wrapper->socks5_set(p_host.utf8().get_data(), p_port, p_username.utf8().get_data(), p_password.utf8().get_data());
+	const char* l_username = alloc_char_array(p_username);
+	const char* l_password = alloc_char_array(p_password);
+	int l_rc = m_wrapper->socks5_set(p_host.utf8().get_data(), p_port, l_username, l_password);
+	free_char_array(l_username);
+	free_char_array(l_password);
+	return l_rc;
 }
 
 //###############################################################

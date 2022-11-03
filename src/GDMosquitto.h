@@ -112,6 +112,18 @@ namespace godot {
 			 */
 			void realloc_buffer(const size_t p_payload_size);
 
+			/**
+			 * Get char* from godot::string
+			 * @param p_data the godot::string
+			 */
+			const char* alloc_char_array(const String p_data);
+
+			/**
+			 * Free the char* from get_char_array
+			 * @param p_data the char*
+			 */
+			void free_char_array(const char* p_data);
+
 			//###############################################################
 			//	Wrapped methods
 			//###############################################################
@@ -122,7 +134,7 @@ namespace godot {
 			 * @param p_clean_session set to true to instruct the broker to clean all messages and subscriptions on disconnect, false to instruct it to keep them
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 		 	 */
-			int initialise(const String p_id, const bool p_clean_session);
+			int initialise(const String p_id, const bool p_clean_session = true);
 
 			/**
 			 * This function allows an existing mosquitto client to be reused
@@ -132,7 +144,7 @@ namespace godot {
 			 * @param p_clean_session set to true to instruct the broker to clean all messages and subscriptions on disconnect, false to instruct it to keep them.
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 		 	 */
-			int reinitialise(const String p_id, const bool p_clean_session);
+			int reinitialise(const String p_id, const bool p_clean_session = true);
 
 			/**
 			 * Return the socket handle for a mosquitto instance 
@@ -152,7 +164,7 @@ namespace godot {
 			 * @param p_retain set to true to make the will a retained message
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 		 	 */
-			int will_set(const String p_topic, const String p_payload, const int p_qos, const bool p_retain);
+			int will_set(const String p_topic, const String p_payload = "", const int p_qos = 0, const bool p_retain = false);
 			
 			/**
 			 * Remove a previously configured will. This must be called before calling mosquitto_connect
@@ -166,7 +178,7 @@ namespace godot {
 			 * @param p_password the password to send as a string. Set to NULL when username is valid in order to send just a username
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 		 	 */
-			int username_pw_set(const String p_username, const String p_password);
+			int username_pw_set(const String p_username, const String p_password = "");
 
 			/**
  			 * Connect to an MQTT broker
@@ -175,7 +187,7 @@ namespace godot {
 			 * @param p_keepalive the number of seconds after which the broker should send a PING message to the client if no other messages have been exchanged in that time
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int connect(const String p_host, const int p_port, const int p_keepalive);
+			int connect(const String p_host, const int p_port = 1883, const int p_keepalive = 60);
 
 			/**
  			 * Connect to an MQTT broker. This is a non-blocking call. 
@@ -188,7 +200,7 @@ namespace godot {
 			 * @param p_keepalive the number of seconds after which the broker should send a PING message to the client if no other messages have been exchanged in that time
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int connect_async(const String p_host, const int p_port, const int p_keepalive);
+			int connect_async(const String p_host, const int p_port = 1883, const int p_keepalive = 60);
 
 			/**
  			 * Connect to an MQTT broker
@@ -242,7 +254,7 @@ namespace godot {
 			 * @param p_retain set to true to make the will a retained message
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int publish(const String p_topic, const String p_payload, const int p_qos, const bool p_retain);
+			int publish(const String p_topic, const String p_payload = "", const int p_qos = 0, const bool p_retain = false);
 
 			/**
 			 * Subscribe to a topic (Message ID emit message_id_updated)
@@ -250,7 +262,7 @@ namespace godot {
 			 * @param p_qos integer value 0, 1 or 2 indicating the Quality of Service to be used
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int subscribe(const String p_sub, const int p_qos);
+			int subscribe(const String p_sub, const int p_qos = 0);
 
 			/**
 			 * Unsubscribe from a topic (Message ID emit message_id_updated)
@@ -304,7 +316,7 @@ namespace godot {
 			 * @param p_pw_callback if keyfile is encrypted, set pw_callback to allow your client to pass the correct password for decryption.  If set to NULL, the password must be entered on the command line.  Your callback must write the password into “buf”, which is “size” bytes long.  The return value must be the length of the password. “userdata” will be set to the calling mosquitto instance.  The mosquitto userdata member variable can be retrieved using mosquitto_userdata.
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int tls_set(const String p_cafile, const String p_capath, const String p_certfile, const String p_keyfile, const String p_pw_callback);
+			int tls_set(const String p_cafile, const String p_capath = "", const String p_certfile = "", const String p_keyfile = "", const String p_pw_callback = "");
 			
 			/**
 			 * Set advanced SSL/TLS options.  Must be called before mosquitto_connect.
@@ -313,7 +325,7 @@ namespace godot {
 			 * @param p_ciphers a string describing the ciphers available for use. See the “openssl ciphers” tool for more information. If NULL, the default ciphers will be used.
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int tls_opts_set(const int p_cert_reqs, const String p_tls_version, const String p_ciphers);
+			int tls_opts_set(const int p_cert_reqs, const String p_tls_version = "", const String p_ciphers = "");
 			
 			/**
 			 * Configure verification of the server hostname in the server certificate.  
@@ -335,7 +347,7 @@ namespace godot {
 			 * @param p_ciphers a string describing the PSK ciphers available for use.  See the “openssl ciphers” tool for more information.  If NULL, the default ciphers will be used
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int tls_psk_set(const String p_psk, const String p_identity, const String p_ciphers);
+			int tls_psk_set(const String p_psk, const String p_identity, const String p_ciphers = "");
 			
 			/**
 			 * Set protocol version
@@ -360,7 +372,7 @@ namespace godot {
 			 * @param p_timeout maximum number of milliseconds to wait for network activity before timing out. Set to 0 for instant return. Set negative to use the default of 1000ms
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int loop(const int p_timeout);
+			int loop(const int p_timeout = -1);
 
 			/**
 			 * Carry out miscellaneous operations required as part of the network loop.
@@ -394,7 +406,7 @@ namespace godot {
 			 * @param p_timeout maximum number of milliseconds to wait for network activity before timing out. Set to 0 for instant return. Set negative to use the default of 1000ms
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int loop_forever(const int p_timeout);
+			int loop_forever(const int p_timeout = -1);
 
 			/**
 			 * This is part of the threaded client interface. Call this once to start a new
@@ -412,7 +424,7 @@ namespace godot {
 			 * @param p_force set to true to force thread cancellation. If false, <mosquitto_disconnect> must have already been called.
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int loop_stop(const bool p_force);
+			int loop_stop(const bool p_force = false);
 
 			/**
 			 * Returns true if there is data ready to be written on the socket
@@ -428,7 +440,7 @@ namespace godot {
 			 * @param p_threaded rue if your application is using threads, false otherwise
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int threaded_set(const bool p_threaded);
+			int threaded_set(const bool p_threaded = false);
 
 			/**
 			 * Configure the client to use a SOCKS5 proxy when connecting. Must be called
@@ -439,7 +451,7 @@ namespace godot {
 			 * @param p_password if not NULL and username is not NULL, use this password when authenticating with the proxy
 			 * @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
 			 */
-			int socks5_set(const String p_host, const int p_port, const String p_username, const String p_password);
+			int socks5_set(const String p_host, const int p_port = 1080, const String p_username = "", const String p_password = "");
 
 		// Public methods
 		public:
