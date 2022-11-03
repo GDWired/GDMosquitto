@@ -52,6 +52,65 @@ If you need specific build (Win32 or Linux arm64 for exemple)
  - Run scons on the root folder.
  - Start Godot3.5 and open the project in the demo folder (or copy/past the folder GDMosquitto in addons into your project)
 
+### API
+```gdscript
+## Tested ##
+
+# Initialize the client
+# @param p_id string to use as the client id. 
+# @param p_clean_session set to true to instruct the broker to clean all messages and subscriptions on disconnect, false to instruct it to keep them
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.initialise(client_id, clean_session)
+
+# Connect the client to the broker (server)
+# @param broker_address the broker address
+# @param broker_port the broker port
+# @param broker_keep_alive keep alive time
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.broker_connect(broker_address, broker_port, broker_keep_alive)
+
+# Disconnect the client
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.broker_disconnect()
+
+# Start the main loop (Not working on Windows)
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.loop_start()
+
+# Start infinite loop
+# @param timeout maximum number of milliseconds to wait for network activity before timing out. Set to 0 for instant return. Set negative to use the default of 1000ms
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.loop_forever(timeout)
+
+# Stop the main loop
+# @param force set to true to force thread cancellation. If false, <mosquitto_disconnect> must have already been called
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.loop_stop(force)
+
+# Used to tell the library that your application is using threads, but not loop_start
+# @param threaded true to tell the library that your application is using threads
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.threaded_set(threaded)
+
+# Subscribe to a topic
+# @param topic the name of the topic
+# @param qos the QoS used
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.subscribe(topic, qos)
+
+# Unsubscribe to a topic
+# @param topic the name of the topic
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.unsubscribe(topic)
+
+# Publish to a topic
+# @param topic the name of the topic
+# @param data the data to send
+# @param qos the QoS used
+# @param retain if true the data is retained
+# @return the reason code, if something wrong happen. 0 = OK (see https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901031)
+_mqtt_client.publish(topic, data, qos, retain)
+```
 
 ## Android
 About export on Android: 
