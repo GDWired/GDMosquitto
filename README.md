@@ -6,7 +6,7 @@ A wrapping of libmosquitto (https://mosquitto.org) able to make MQTT clients in 
 
 <img width="1136" alt="Capture d’écran 2022-10-27 à 15 27 05" src="https://user-images.githubusercontent.com/4105962/198297381-d3eea888-d09f-4532-a38c-585850918de8.png">
 
-In the picture:
+The picture represent the demo project:
  - The first line is the subscription parameters, subscribe to the SIN topic and expect JSON formatted data like [t,sin(t)] and plot it.
  - The second line is the pulisher parameters, publish JSON formatted data to the SIN topic [t,sin(t)].
  - The last line sends the text from the first edit line to the topic DATA (the second edit line subscribes to DATA and displays the sent text).
