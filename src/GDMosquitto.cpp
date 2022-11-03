@@ -173,7 +173,6 @@ int GDMosquitto::will_set(const String p_topic, const String p_payload, const in
 	if (!m_wrapper) {
 		return MOSQ_ERR_NOTINIT;
 	}
-	int l_id;
 	const char* l_payload = alloc_char_array(p_payload);
 	size_t l_payload_size = 0;
 	if (l_payload != nullptr) {
@@ -181,9 +180,6 @@ int GDMosquitto::will_set(const String p_topic, const String p_payload, const in
 	}
 	int l_rc = m_wrapper->will_set(p_topic.utf8().get_data(), l_payload_size, l_payload, p_qos, p_retain);
 	free_char_array(l_payload);
-	if (!l_rc) {
-		emit_signal("message_id_updated", l_id, p_topic, MESSAGE_ID_ACTION_PUBLISH);
-	}
 	return l_rc;
 }
 
