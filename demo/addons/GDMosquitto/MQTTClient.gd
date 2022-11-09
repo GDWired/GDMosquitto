@@ -41,7 +41,7 @@ func _ready():
 	_mqtt_client.connect("unsubscribed", self, "_on_MQTTClient_unsubscribed")
 	
 	_rng.randomize()
-	var random_time = _rng.randf_range(100, 1000)
+	var random_time = _rng.randf_range(100, 2000)
 	
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
