@@ -37,7 +37,7 @@ func _notification(what: int) -> void:
 		else:
 			_loop_thread.wait_to_finish()
 ```
-However, the behavior on Windows is not exactly the same. If QoS 0 is used, there are some lost packets (it's ok with QoS 1).
+However, the behavior under Windows is not exactly the same. If QoS 0 is used, there are some lost packets (it's ok with QoS 1). And there is sometimes a random crash at startup... If your project is simple, I recommande to use my light implementation of paho.mqtt here (https://github.com/GDWired/GDPaho) available on Windows and Linux (macOS is WIP).
 
 ## To use it
 ### Prebuild
