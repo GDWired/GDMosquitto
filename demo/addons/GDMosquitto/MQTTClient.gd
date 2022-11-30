@@ -20,7 +20,6 @@ export var broker_address: String = "localhost"
 export var broker_port: int = 1883
 export var broker_keep_alive: int = 60
 
-var _rng = RandomNumberGenerator.new()
 var _loop_start_supported: bool = true
 var _loop_thread: Thread = null
 var _connected: bool = false
@@ -40,12 +39,8 @@ func _ready():
 	_mqtt_client.connect("subscribed", self, "_on_MQTTClient_subscribed")
 	_mqtt_client.connect("unsubscribed", self, "_on_MQTTClient_unsubscribed")
 	
-	_rng.randomize()
-	var random_time = _rng.randf_range(100, 2000)
-	
 	# Init the client
 	_mqtt_client.initialise(client_id, clean_session)
-	yield(get_tree().create_timer(random_time / 1000), "timeout")
 	_mqtt_client.broker_connect(broker_address, broker_port, broker_keep_alive)
 	_loop_start_supported = not (_mqtt_client.loop_start() == GDMosquitto.RC.MOSQ_ERR_NOT_SUPPORTED)
 	
