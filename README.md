@@ -2,7 +2,7 @@
 
 # <p align="center">GDMosquitto (Godot 3.5)</p>
 
-A wrapping of libmosquitto (https://mosquitto.org) able to make MQTT clients in Godot.
+A wrapping of libmosquitto (https://mosquitto.org) able to make MQTT clients in Godot, is a part of GDWired (https://github.com/GDWired).
 
 <img width="1136" alt="Capture d’écran 2022-10-27 à 15 27 05" src="https://user-images.githubusercontent.com/4105962/198297381-d3eea888-d09f-4532-a38c-585850918de8.png">
 
